@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>LayerLab — Custom 3D Prints</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #faf9f6;
+      color: #171717;
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    /* HEADER */
+    header {
+      background: #fff;
+      border-bottom: 1px solid #e8e5df;
+      padding: 18px 6%;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+      margin-bottom: 18px;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .logo span {
+      font-weight: 400;
+    }
+
+    .search {
+      display: flex;
+      width: min(500px, 100%);
+      border: 1px solid #d8d5cf;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .search input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 12px 15px;
+    }
+
+    .search button {
+      border: none;
+      background: #171717;
+      color: #fff;
+      padding: 0 20px;
+      cursor: pointer;
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 25px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* HERO */
+    .hero {
+      max-width: 1250px;
+      margin: 45px auto;
+      padding: 0 25px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 45px;
+      align-items: center;
+    }
+
+    .hero-image {
+      min-height: 350px;
+      border-radius: 18px;
+      background:
+        linear-gradient(
+          rgba(0,0,0,.08),
+          rgba(0,0,0,.08)
+        ),
+        url("https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1200&q=80")
+        center / cover;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      margin-bottom: 15px;
+    }
+
+    .hero h1 {
+      font-size: clamp(42px, 6vw, 72px);
+      line-height: .98;
+      letter-spacing: -3px;
+      margin-bottom: 25px;
+    }
+
+    .hero p {
+      color: #666;
+      font-size: 17px;
+      max-width: 600px;
+      margin-bottom: 28px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 13px 20px;
+      border-radius: 7px;
+      font-weight: 700;
+      border: 1px solid #171717;
+    }
+
+    .btn-primary {
+      background: #171717;
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: transparent;
+    }
+
+    /* BENEFITS */
+    .benefits {
+      max-width: 1250px;
+      margin: 0 auto 55px;
+      padding: 0 25px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid #ddd9d1;
+      border-bottom: 1px solid #ddd9d1;
+    }
+
+    .benefit {
+      padding: 25px 20px;
+    }
+
+    .benefit + .benefit {
+      border-left: 1px solid #ddd9d1;
+    }
+
+    .benefit strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .benefit span {
+      color: #777;
+      font-size: 14px;
+    }
+
+    /* PRODUCTS */
+    .products-section {
+      max-width: 1250px;
+      margin: auto;
+      padding: 0 25px 70px;
+    }
+
+    .products-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      gap: 20px;
+    }
+
+    .products-header h2 {
+      font-size: 32px;
+      letter-spacing: -1px;
+    }
+
+    .sort {
+      padding: 10px 14px;
+      border: 1px solid #d5d2cc;
+      background: white;
+      border-radius: 7px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+    }
+
+    .product {
+      background: #fff;
+      border: 1px solid #e5e2dc;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .product:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.07);
+    }
+
+    .product-image {
+      height: 220px;
+      background: #eeeae3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 70px;
+    }
+
+    .product-info {
+      padding: 17px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      color: #777;
+    }
+
+    .product h3 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .description {
+      font-size: 13px;
+      color: #777;
+      min-height: 40px;
+      margin-bottom: 10px;
+    }
+
+    .rating {
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .price {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .current-price {
+      font-weight: 800;
+      font-size: 19px;
+    }
+
+    .old-price {
+      color: #999;
+      text-decoration: line-through;
+      font-size: 14px;
+    }
+
+    .discount {
+      color: #27733e;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .cart-btn {
+      width: 100%;
+      border: 1px solid #171717;
+      background: #171717;
+      color: white;
+      padding: 11px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .cart-btn:hover {
+      background: #333;
+    }
+
+    /* FOOTER */
+    footer {
+      background: #181818;
+      color: white;
+      padding: 50px 6%;
+    }
+
+    .footer-grid {
+      max-width: 1250px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+    }
+
+    footer h3 {
+      margin-bottom: 15px;
+    }
+
+    footer p {
+      color: #aaa;
+      font-size: 14px;
+      max-width: 350px;
+    }
+
+    footer ul {
+      list-style: none;
+    }
+
+    footer li {
+      margin-bottom: 8px;
+      color: #bbb;
+      font-size: 14px;
+    }
+
+    .copyright {
+      max-width: 1250px;
+      margin: 40px auto 0;
+      padding-top: 20px;
+      border-top: 1px solid #333;
+      color: #888;
+      font-size: 13px;
+    }
+
+    /* MOBILE */
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .nav {
+        gap: 15px;
+      }
+
+      .benefits {
+        grid-template-columns: 1fr;
+      }
+
+      .benefit + .benefit {
+        border-left: none;
+        border-top: 1px solid #ddd9d1;
+      }
+
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 48px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="topbar">
+
+      <a href="#" class="logo">
+        L<span>ayerLab</span>
+      </a>
+
+      <form class="search">
+        <input
+          type="search"
+          placeholder="Search for planters, lamps, desk toys..."
+        >
+        <button type="submit">Search</button>
+      </form>
+
+    </div>
+
+    <nav class="nav">
+      <a href="#">All products</a>
+      <a href="#">🪴 Planters</a>
+      <a href="#">🖥️ Desk & Tech</a>
+      <a href="#">🎁 Gifts</a>
+      <a href="#">💡 Lighting</a>
+      <a href="#">🐉 Toys</a>
+      <a href="#">⚙️ Prototyping</a>
+    </nav>
+  </header>
+
+
+  <!-- HERO -->
+  <section class="hero">
+
+    <div class="hero-content">
+      <div class="eyebrow">
+        MADE TO ORDER · SHIPS IN 48 HOURS
+      </div>
+
+      <h1>
+        Printed for you,<br>
+        priced for every desk.
+      </h1>
+
+      <p>
+        Planters, desk gear, lamps, gifts and prototype kits —
+        all printed on our own bench. Add to cart, pay your way,
+        and track the order from the moment it goes into the queue.
+      </p>
+
+      <div class="buttons">
+        <a href="#products" class="btn btn-primary">
+          Shop the catalogue
+        </a>
+
+        <a href="#" class="btn btn-secondary">
+          Owner sign in
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-image"></div>
+
+  </section>
+
+
+  <!-- BENEFITS -->
+  <section class="benefits">
+
+    <div class="benefit">
+      <strong>Free delivery over ₹999</strong>
+      <span>Flat ₹49 below that, anywhere in India.</span>
+    </div>
+
+    <div class="benefit">
+      <strong>Printed to order</strong>
+      <span>Your order goes straight into the print queue.</span>
+    </div>
+
+    <div class="benefit">
+      <strong>7 day replacement</strong>
+      <span>Any print fault, replaced without questions.</span>
+    </div>
+
+  </section>
+
+
+  <!-- PRODUCTS -->
+  <main class="products-section" id="products">
+
+    <div class="products-header">
+      <div>
+        <h2>All products</h2>
+        <span>8 items</span>
+      </div>
+
+      <select class="sort">
+        <option>Popularity</option>
+        <option>Price: low to high</option>
+        <option>Price: high to low</option>
+        <option>Biggest discount</option>
+        <option>Top rated</option>
+      </select>
+    </div>
+
+
+    <div class="product-grid">
+
+      <!-- PRODUCT 1 -->
+      <article class="product">
+        <div class="product-image">🔑</div>
+
+        <div class="product-info">
+          <span class="badge">Top rated</span>
+
+          <h3>Custom Name Keychain</h3>
+
+          <p class="description">
+            Personalised, practical and made for you
+          </p>
+
+          <div class="rating">
+            ★ 4.8 <span>512 reviews</span>
+          </div>
+
+          <div class="price">
+            <span class="current-price">₹299</span>
+            <span class="old-price">₹499</span>
+            <span class="discount">40% off</span>
+          </div>
+
+          <button class="cart-btn">Add to cart</button>
+        </div>
+      </article>
+
+
+      <!-- PRODUCT 2 -->
+      <article class="product">
+        <div class="product-image">🐉</div>
+
+        <div class="product-info">
+          <span class="badge">Deal of the day</span>
+
+          <h3>Articulated Dragon</h3>
+
+          <p class="description">
+            Printed in one piece, moves like magic
+          </p>
+
+          <div class="rating">
+            ★ 4.9 <span>341 reviews</span>
+          </div>
+
+          <div class="price">
+            <span class="current-price">₹899</span>
+            <span class="old-price">₹1,299</span>
+            <span class="discount">31% off</span>
+          </div>
+
+          <button class="cart-btn">Add to cart</button>
+        </div>
+      </article>
+
+
+      <!-- PRODUCT 3 -->
+      <article class="product">
+        <div class="product-image">🎧</div>
+
+        <div class="product-info">
+
+          <h3>Curved Headphone Stand</h3>
+
+          <p class="description">
+            Give your headphones somewhere to live
+          </p>
+
+          <div class="rating">
+            ★ 4.7 <span>205 reviews</span>
+          </div>
+
+          <div class="price">
+            <span class="current-price">₹799</span>
+            <span class="old-price">₹1,199</span>
+            <span class="discount">33% off</span>
+          </div>
+
+          <button class="cart-btn">Add to cart</button>
+        </div>
+      </article>
+
+
+      <!-- PRODUCT 4 -->
+      <article class="product">
+        <div class="product-image">🪴</div>
+
+        <div class="product-info">
+          <span class="badge">Bestseller</span>
+
+          <h3>Pocket Planter Trio</h3>
+
+          <p class="description">
+            Three tiny homes for tiny green friends
+          </p>
+
+          <div class="rating">
+            ★ 4.6 <span>218 reviews</span>
+          </div>
+
+          <div class="price">
+            <span class="current-price">₹450</span>
+            <span class="old-price">₹699</span>
+            <span class="discount">36% off</span>
+          </div>
+
+          <button class="cart-btn">Add to cart</button>
+        </div>
+      </article>
+
+
+      <!-- PRODUCT 5 -->
+      <article class="product">
+        <div class="product-image">💡</div>
+
+        <div class="product-info">
+
+          <h3>Hex Honeycomb Lamp Shade</h3>
+
+          <p class="description">
+            Warm light through a honeycomb wall
+          </p>
+
+          <div class="rating">
+            ★ 4.5 <span>143 reviews</span>
+          </div>
+
+          <div class="price">
+            <span class="current-price">₹1,299</span>
+            <span class="old-price">₹1,899</span>
+            <span class="discount">32% off</span>
+          </div>
+
+          <button class="cart-btn">Add to cart</button>
+        </div>
+      </article>
+
+
+      <!-- PRODUCT 6 -->
+      <article class="product">
+        <div class="product-image">🌀</div>
+
+        <div class="product-info">
+
+          <h3>Tactile Desk Spinner</h3>
+
+          <p class="description">
+            A satisfying shape for hands at work
+          </p>
+
+          <div class="rating">
+            ★ 4.4 <span>96 reviews</span>
+          </div>
+
+          <div class="price">
+            <span class="current-price">₹690</span>
+            <span class="old-price">₹999</span>
+            <span class="discount">31% off</span>
+          </div>
+
+          <button class="cart-btn">Add to cart</button>
+        </div>
+      </article>
+
+
+      <!-- PRODUCT 7 -->
+      <article class="product">
+        <div class="product-image">🔌</div>
+
+        <div class="product-info">
+
+          <h3>Cable Nest Organiser</h3>
+
+          <p class="description">
+            Every cable exactly where you left it
+          </p>
+
+          <div class="rating">
+            ★ 4.3 <span>87 reviews</span>
+          </div>
+
+          <div class="price">
+            <span class="current-price">₹349</span>
+            <span class="old-price">₹599</span>
+            <span class="discount">42% off</span>
+          </div>
+
+          <button class="cart-btn">Add to cart</button>
+        </div>
+      </article>
+
+
+      <!-- PRODUCT 8 -->
+      <article class="product">
+        <div class="product-image">⚙️</div>
+
+        <div class="product-info">
+
+          <h3>Prototype Parts Kit</h3>
+
+          <p class="description">
+            Gears, brackets, clips and hinges
+          </p>
+
+          <div class="rating">
+            ★ 4.2 <span>64 reviews</span>
+          </div>
+
+          <div class="price">
+            <span class="current-price">₹1,499</span>
+            <span class="old-price">₹2,199</span>
+            <span class="discount">32% off</span>
+          </div>
+
+          <button class="cart-btn">Add to cart</button>
+        </div>
+      </article>
+
+    </div>
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer>
+
+    <div class="footer-grid">
+
+      <div>
+        <h3>L LayerLab</h3>
+
+        <p>
+          Made-to-order 3D prints. Every piece comes off our
+          own bench, packed the same week you order it.
+        </p>
+      </div>
+
+      <div>
+        <h3>Shop</h3>
+
+        <ul>
+          <li><a href="#">Planters</a></li>
+          <li><a href="#">Desk & Tech</a></li>
+          <li><a href="#">Gifts</a></li>
+          <li><a href="#">Lighting</a></li>
+          <li><a href="#">Toys</a></li>
+          <li><a href="#">Prototyping</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>Your orders</h3>
+
+        <ul>
+          <li><a href="#">Cart</a></li>
+          <li><a href="#">Track an order</a></li>
+          <li><a href="#">Owner dashboard</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>Help</h3>
+
+        <ul>
+          <li>Free delivery over ₹999</li>
+          <li>7 day replacement on print faults</li>
+          <li>Bulk and prototype enquiries welcome</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="copyright">
+      © 2026 LayerLab. Prices in Indian rupees.
+    </div>
+
+  </footer>
+
+</body>
+</html>
